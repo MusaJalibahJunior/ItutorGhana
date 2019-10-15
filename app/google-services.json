@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1093621387807",
+    "firebase_url": "https://itutorghana-111e6.firebaseio.com",
+    "project_id": "itutorghana-111e6",
+    "storage_bucket": "itutorghana-111e6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1093621387807:android:adbfb7382c058cf9c97b2a",
+        "android_client_info": {
+          "package_name": "com.mozay.itutorghana"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1093621387807-27emchkdf4bc0tnakt65ied8o6grnmtj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mozay.itutorghana",
+            "certificate_hash": "fdfaf111a69ffab075e389933282860660a25600"
+          }
+        },
+        {
+          "client_id": "1093621387807-bsnlkg7ahsddcru68vqofmlmsi2gmhif.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvhgXdYYuTtdFE9eP0UeNofwWZ_1zXjzo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1093621387807-bsnlkg7ahsddcru68vqofmlmsi2gmhif.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
