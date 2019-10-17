@@ -7,23 +7,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class EditProfile extends AppCompatActivity {
 
-    FirebaseDatabase database;
-    DatabaseReference myRef;
+    DatabaseReference database;
 
     EditText nameEditText;
     EditText emailEditText;
@@ -33,6 +29,7 @@ public class EditProfile extends AppCompatActivity {
     EditText SosEditText;
     EditText YearsofExpEditText;
     EditText BriefSumEditText;
+    EditText NationalityEditText;
 
     Button submitProfileBtn;
 
@@ -47,6 +44,7 @@ public class EditProfile extends AppCompatActivity {
     String sos;
     String yearsOfExp;
     String briefSum;
+    String nationality;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,23 +59,23 @@ public class EditProfile extends AppCompatActivity {
         SosEditText = findViewById(R.id.sos1);
         YearsofExpEditText = findViewById(R.id.yearofEx1);
         BriefSumEditText = findViewById(R.id.brefS1);
+        NationalityEditText = findViewById(R.id.nationality1);
 
         submitProfileBtn = findViewById(R.id.editProfileBtn);
 
-        database = FirebaseDatabase.getInstance();
-        myRef =database.getReference("Userinfo");
+        database = FirebaseDatabase.getInstance().getReference();
 
         Intent intent = getIntent();
 
         name = intent.getStringExtra("name");
         email =intent.getStringExtra("email");
-
-        dateOfBirth = dateofBirthEdithText.getText().toString();
-        location = locationEditText.getText().toString();
-        phoneNumber = PhoneNumberEditText.getText().toString();
-        sos = SosEditText.getText().toString();
-        yearsOfExp = YearsofExpEditText.getText().toString();
-        briefSum = BriefSumEditText.getText().toString();
+        location = intent.getStringExtra("loc");
+        phoneNumber = intent.getStringExtra("phone");
+        yearsOfExp = intent.getStringExtra("yoe");
+        sos = intent.getStringExtra("sos");
+        briefSum = intent.getStringExtra("briefSum");
+        dateOfBirth = intent.getStringExtra("dob");
+        nationality = intent.getStringExtra("nationality");
 
         nameEditText.setText(name);
         emailEditText.setText(email);
@@ -87,6 +85,7 @@ public class EditProfile extends AppCompatActivity {
         SosEditText.setText(sos);
         YearsofExpEditText.setText(yearsOfExp);
         BriefSumEditText.setText(briefSum);
+        NationalityEditText.setText(nationality);
 
         submitProfileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,20 +97,29 @@ public class EditProfile extends AppCompatActivity {
 
     private void uploadUserInfo() {
 
-       list = new ArrayList<>();
-       personalInfo = new PersonalInfo();
+        String name = nameEditText.getText().toString();
+        String email = emailEditText.getText().toString();
+        String location = locationEditText.getText().toString();
+        String phoneNumber = PhoneNumberEditText.getText().toString();
+        String sos = SosEditText.getText().toString();
+        String yearsOfExp = YearsofExpEditText.getText().toString();
+        String nationality = NationalityEditText.getText().toString();
+        String dateOfBirth = dateofBirthEdithText.getText().toString();
+        String briefSum = BriefSumEditText.getText().toString();
 
-       personalInfo.setTeacherName(name);
-       personalInfo.setTeacherEmail(email);
-       personalInfo.setTeacherDateofbirth(dateOfBirth);
-       personalInfo.setTeacherlocation(location);
-       personalInfo.setPhonenum(phoneNumber);
-       personalInfo.setTeachersubjectofesp(sos);
-       personalInfo.setTeacheryearsofExp(yearsOfExp);
-       personalInfo.setTeacherbefs(briefSum);
+        PersonalInfo personalInfo = new PersonalInfo();
 
-       list.add(personalInfo);
+        personalInfo.setTeacherName(name);
+        personalInfo.setTeacherEmail(email);
+        personalInfo.setTeacherlocation(location);
+        personalInfo.setPhonenum(phoneNumber);
+        personalInfo.setTeachersubjectofesp(sos);
+        personalInfo.setTeacheryearsofExp(yearsOfExp);
+        personalInfo.setTeacherbefs(briefSum);
+        personalInfo.setTeacherNationality(nationality);
+        personalInfo.setTeacherDateofbirth(dateOfBirth);
 
-       myRef.setValue(personalInfo);
+        database.child("Teacher details").setValue(personalInfo);
+        finish();
     }
 }

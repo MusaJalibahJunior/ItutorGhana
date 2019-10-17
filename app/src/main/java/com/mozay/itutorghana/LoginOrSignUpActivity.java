@@ -32,9 +32,8 @@ public class LoginOrSignUpActivity extends AppCompatActivity {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
-                startActivity(intent);
-
+                StartRegisterActivity();
+                finish();
             }
         });
     }
@@ -42,11 +41,12 @@ public class LoginOrSignUpActivity extends AppCompatActivity {
     private void StartLoginActivity(){
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
-
+        finish();
     }
 
     private void StartRegisterActivity(){
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
+        finish();
     }
 }

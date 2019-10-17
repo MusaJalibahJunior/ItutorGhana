@@ -23,26 +23,10 @@
             android:scaleType="centerCrop" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/firstNameInputLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/image1"
-            android:layout_margin="8dp">
-
-            <EditText
-                android:id="@+id/firstN1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Name"
-                android:maxLines="1" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/emailInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/firstNameInputLayout"
+            android:layout_below="@id/image1"
             android:layout_margin="8dp">
 
             <EditText
@@ -56,10 +40,43 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/dobInputLayout"
+            android:id="@+id/passwordTextInputlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/emailInputLayout"
+            android:layout_margin="8dp">
+
+            <EditText
+                android:id="@+id/passwordEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:hint="Password"
+                android:maxLines="1"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/firstNameInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/passwordTextInputlayout"
+            android:layout_margin="8dp">
+
+            <EditText
+                android:id="@+id/firstN1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Name"
+                android:maxLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/dobInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/firstNameInputLayout"
             android:layout_margin="8dp">
 
             <EditText
