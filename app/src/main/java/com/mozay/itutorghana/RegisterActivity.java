@@ -9,12 +9,19 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -121,7 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
         briefSum = BriefSumEditText.getText().toString();
         nationality = nationalityEditText.getText().toString();
 
-        String password = passwordEditText.getText().toString();
+        final String password = passwordEditText.getText().toString();
 
         if (!name.isEmpty()) {
             NameEmpty = false;
@@ -201,36 +208,55 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(this, "Field empty", Toast.LENGTH_LONG).show();
         } else {
 
-            PersonalInfo personalInfo = new PersonalInfo();
+//            PersonalInfo personalInfo = new PersonalInfo(name, name, name, nationality, name, name, name, name, name, name, name);
 
-            personalInfo.setTeacherName(name);
-            personalInfo.setTeacherEmail(email);
-            personalInfo.setTeacherlocation(location);
-            personalInfo.setPhonenum(phoneNumber);
-            personalInfo.setTeachersubjectofesp(sos);
-            personalInfo.setTeacheryearsofExp(yearsOfExp);
-            personalInfo.setTeacherbefs(briefSum);
-            personalInfo.setTeacherNationality(nationality);
-            personalInfo.setTeacherDateofbirth(dateOfBirth);
+            Map<String, Object> teacher = new HashMap<>();
+            teacher.put("name",name);
+            teacher.put("email",email);
+            teacher.put("location",location);
+            teacher.put("phoneNumber",phoneNumber);
+            teacher.put("sos",sos);
+            teacher.put("yearsOfExp",yearsOfExp);
+            teacher.put("briefSum",briefSum);
+            teacher.put("nationality",nationality);
+            teacher.put("dateOfBirth",dateOfBirth);
 
-            mDatabase.child("Teacher details").setValue(personalInfo);
 
-            mAuth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            db.collection("teachers")
+                    .add(teacher)
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(RegisterActivity.this, "Registration complete", Toast.LENGTH_LONG).show();
+                        public void onSuccess(DocumentReference documentReference) {
+//                            Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                            mAuth.createUserWithEmailAndPassword(email, password)
+                                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(RegisterActivity.this, "Registration complete", Toast.LENGTH_LONG).show();
 
-                                Intent intent = new Intent(getApplicationContext(), TeachersDetailActivity.class);
-                                startActivity(intent);
-                                finish();
+                                                Intent intent = new Intent(getApplicationContext(), TeachersDetailActivity.class);
+                                                startActivity(intent);
+                                                finish();
 
-                            } else {
-                                Toast.makeText(RegisterActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                            }
+                                            } else {
+                                                Toast.makeText(RegisterActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(RegisterActivity.this, "Registration Failed. Try again!", Toast.LENGTH_LONG).show();
+                            Log.e("REGFF", e.getMessage());
                         }
                     });
+//            mDatabase.child("Teacher details").setValue(personalInfo);
+
         }
     }
 }

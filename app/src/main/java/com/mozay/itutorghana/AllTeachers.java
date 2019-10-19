@@ -1,18 +1,29 @@
 package com.mozay.itutorghana;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.firebase.ui.database.SnapshotParser;
+
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,64 +35,72 @@ public class AllTeachers extends AppCompatActivity {
 
     RecyclerView recyclerView;
     LinearLayoutManager linearLayoutManager;
-    FirebaseRecyclerAdapter<PersonalInfo, ViewHolder> firebaseRecyclerAdapter;
     Query query;
+
+    TeachersAdapter adapter;
+    ArrayList<PersonalInfo> list;
+
+    DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_all_teachers);recyclerView = findViewById(R.id.recycler_view);
+        setContentView(R.layout.activity_all_teachers);
+        recyclerView = findViewById(R.id.mRecyclerView);
+
+        list = new ArrayList<>();
+
+        adapter = new TeachersAdapter(this, list);
 
         linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
 
-        DatabaseReference databaseReference;
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Teacher details");
-        query = databaseReference.orderByKey();
+//        databaseReference = FirebaseDatabase.getInstance().getReference().child("Teacher details");
+//        query = databaseReference;
 
         listAllTeachers();
     }
 
-    private void listAllTeachers() {
+    public void listAllTeachers() {
 
-        FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<PersonalInfo>().setQuery(query, PersonalInfo.class).build();
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<PersonalInfo, ViewHolder>(options) {
-            @Override
-            protected void onBindViewHolder(@NonNull ViewHolder viewHolder, int i, @NonNull PersonalInfo personalInfo) {
-                viewHolder.textView.setText(personalInfo.getTeacherName());
-            }
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            @NonNull
-            @Override
-            public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.item, parent, false);
-                return new ViewHolder(view);
-            }
-        };
-    }
+        db.collection("teachers")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                PersonalInfo teacher = new PersonalInfo();
+                                teacher.setTeacherName(document.getData().get("name").toString());
+                                teacher.setTeacherDateofbirth(document.getData().get("dateOfBirth").toString());
+                                teacher.setTeacherNationality(document.getData().get("nationality").toString());
+                                teacher.setTeacheryearsofExp(document.getData().get("yearsOfExp").toString());
+                                teacher.setTeacherlocation(document.getData().get("location").toString());
+                                teacher.setTeachersubjectofesp(document.getData().get("sos").toString());
+                                teacher.setTeacherbefs(document.getData().get("briefSum").toString());
+                                teacher.setTeacherEmail(document.getData().get("email").toString());
+                                teacher.setPhonenum(document.getData().get("phoneNumber").toString());
+                                Log.i("TTT", teacher.toString());
+                                list.add(teacher);
 
-    class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textView;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
 
-            textView = itemView.findViewById(R.id.textttttttttt);
-        }
-    }
+                                Log.d("TINFO", document.getId() + " => " + document.getData());
+                            }
+                            adapter.notifyDataSetChanged();
+                        } else {
+                            Log.w("TINFO", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        firebaseRecyclerAdapter.startListening();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        firebaseRecyclerAdapter.stopListening();
+//        recyclerView.setAdapter(firebaseRecyclerAdapter);
     }
 }
+
+

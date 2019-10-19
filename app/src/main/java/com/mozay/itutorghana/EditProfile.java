@@ -107,7 +107,7 @@ public class EditProfile extends AppCompatActivity {
         String dateOfBirth = dateofBirthEdithText.getText().toString();
         String briefSum = BriefSumEditText.getText().toString();
 
-        PersonalInfo personalInfo = new PersonalInfo();
+        PersonalInfo personalInfo = new PersonalInfo(name, name, name, nationality, name, name, name, name, name, name, name);
 
         personalInfo.setTeacherName(name);
         personalInfo.setTeacherEmail(email);
@@ -118,6 +118,7 @@ public class EditProfile extends AppCompatActivity {
         personalInfo.setTeacherbefs(briefSum);
         personalInfo.setTeacherNationality(nationality);
         personalInfo.setTeacherDateofbirth(dateOfBirth);
+
 
         database.child("Teacher details").setValue(personalInfo);
         finish();

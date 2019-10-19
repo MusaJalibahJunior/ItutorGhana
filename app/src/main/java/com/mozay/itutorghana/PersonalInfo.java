@@ -2,6 +2,8 @@ package com.mozay.itutorghana;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import androidx.annotation.NonNull;
+
 @IgnoreExtraProperties
 public class PersonalInfo {
 
@@ -16,6 +18,23 @@ public class PersonalInfo {
     private String Phonenum;
     private String userId;
     private String profilepictureUri;
+
+    public PersonalInfo() {
+    }
+
+    public PersonalInfo(String teacherName, String teacherEmail, String teacherDateofbirth, String teacherNationality, String teacherlocation, String teacheryearsofExp, String teachersubjectofesp, String teacherbefs, String phonenum, String userId, String profilepictureUri) {
+        TeacherName = teacherName;
+        TeacherEmail = teacherEmail;
+        TeacherDateofbirth = teacherDateofbirth;
+        TeacherNationality = teacherNationality;
+        Teacherlocation = teacherlocation;
+        TeacheryearsofExp = teacheryearsofExp;
+        Teachersubjectofesp = teachersubjectofesp;
+        Teacherbefs = teacherbefs;
+        Phonenum = phonenum;
+        this.userId = userId;
+        this.profilepictureUri = profilepictureUri;
+    }
 
     public void setTeacherName(String teacherName) {
         TeacherName = teacherName;
@@ -103,5 +122,11 @@ public class PersonalInfo {
 
     public String getProfilepictureUri() {
         return profilepictureUri;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return  "Name:" + getTeacherName() + " Email:" + getTeacherEmail();
     }
 }
