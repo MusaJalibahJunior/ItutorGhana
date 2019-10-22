@@ -2,6 +2,7 @@ package com.mozay.itutorghana;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -10,6 +11,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -17,6 +21,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,9 +51,9 @@ public class TeachersDetailActivity extends AppCompatActivity {
     TextView BreifSumTextView;
     TextView nationalityTextView;
 
-    FirebaseDatabase database;
     DatabaseReference myRef;
 
+    FirebaseFirestore db;
     Button editProfileBtn;
 
     String name;
@@ -70,42 +82,53 @@ public class TeachersDetailActivity extends AppCompatActivity {
         BreifSumTextView = findViewById(R.id.brefS);
         nationalityTextView = findViewById(R.id.nationality);
 
-        database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Teacher details");
+        db = FirebaseFirestore.getInstance();
 
+        db.collection("teachers").get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<PersonalInfo> list = new ArrayList<>();
 
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            for (DocumentSnapshot snapshot:queryDocumentSnapshots)
+                                list.add(snapshot.toObject(PersonalInfo.class));
 
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                PersonalInfo personalInfo = dataSnapshot.getValue(PersonalInfo.class);
-
-                name = personalInfo.getTeacherName();
-                dateOfBirth = personalInfo.getTeacherDateofbirth();
-                nationality = personalInfo.getTeacherNationality();
-                location = personalInfo.getTeacherlocation();
-                phoneNumber = personalInfo.getPhonenum();
-                email = personalInfo.getTeacherEmail();
-                subjectOfSpecialization = personalInfo.getTeachersubjectofesp();
-                briefSummary = personalInfo.getTeacherbefs();
-                yearsOfExperience = personalInfo.getTeacheryearsofExp();
-
-                nameTxtView.setText(name);
-                dateofBirthTextView.setText(dateOfBirth);
-                nationalityTextView.setText(nationality);
-                locationTextView.setText(location);
-                PhoneNumberTextView.setText(phoneNumber);
-                emailTxtView.setText(email);
-                SosTextView.setText(subjectOfSpecialization);
-                BreifSumTextView.setText(briefSummary);
-                YearsofTextView.setText(yearsOfExperience);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+                            Log.d("vkv", "onSuccess: " + list);
+                        }
+                    }
+                });
+//        myRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                PersonalInfo personalInfo = dataSnapshot.getValue(PersonalInfo.class);
+//
+//                name = personalInfo.getTeacherName();
+//                dateOfBirth = personalInfo.getTeacherDateofbirth();
+//                nationality = personalInfo.getTeacherNationality();
+//                location = personalInfo.getTeacherlocation();
+//                phoneNumber = personalInfo.getPhonenum();
+//                email = personalInfo.getTeacherEmail();
+//                subjectOfSpecialization = personalInfo.getTeachersubjectofesp();
+//                briefSummary = personalInfo.getTeacherbefs();
+//                yearsOfExperience = personalInfo.getTeacheryearsofExp();
+//
+//                nameTxtView.setText(name);
+//                dateofBirthTextView.setText(dateOfBirth);
+//                nationalityTextView.setText(nationality);
+//                locationTextView.setText(location);
+//                PhoneNumberTextView.setText(phoneNumber);
+//                emailTxtView.setText(email);
+//                SosTextView.setText(subjectOfSpecialization);
+//                BreifSumTextView.setText(briefSummary);
+//                YearsofTextView.setText(yearsOfExperience);
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
 
         editProfileBtn = findViewById(R.id.editProfileBtn);
 

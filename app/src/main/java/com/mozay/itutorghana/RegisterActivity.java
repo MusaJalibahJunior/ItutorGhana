@@ -1,11 +1,14 @@
 package com.mozay.itutorghana;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,6 +22,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,6 +61,8 @@ public class RegisterActivity extends AppCompatActivity {
     TextInputLayout briefSummaryTextInputLayout;
     TextInputLayout passwordTextInputLayout;
 
+    ImageButton profileImage;
+
     String name;
     String email;
     String dateOfBirth;
@@ -63,8 +73,11 @@ public class RegisterActivity extends AppCompatActivity {
     String briefSum;
     String nationality;
 
+    Uri photoUri;
+
     private FirebaseAuth mAuth;
-    private DatabaseReference mDatabase;
+    private StorageReference mReference;
+    private StorageTask uploadTask;
 
     boolean NameEmpty = true;
     boolean EmailEmpty = true;
@@ -94,6 +107,8 @@ public class RegisterActivity extends AppCompatActivity {
         nationalityEditText = findViewById(R.id.nationality1);
         passwordEditText = findViewById(R.id.passwordEditText);
 
+        profileImage = findViewById(R.id.image1);
+
         nameTextInputLayout = findViewById(R.id.firstNameInputLayout);
         emailTextInputLayout = findViewById(R.id.emailInputLayout);
         dobTextInputLayout = findViewById(R.id.dobInputLayout);
@@ -106,7 +121,17 @@ public class RegisterActivity extends AppCompatActivity {
         passwordTextInputLayout = findViewById(R.id.passwordTextInputlayout);
 
         mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mReference = FirebaseStorage.getInstance().getReference("users");
+
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_PICK);
+                startActivityForResult(Intent.createChooser(intent, "Select Image"), 1);
+            }
+        });
 
         summitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,6 +139,17 @@ public class RegisterActivity extends AppCompatActivity {
                 submitUserInfo();
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            photoUri = data.getData();
+
+            Picasso.get().load(photoUri).into(profileImage);
+        }
     }
 
     private void submitUserInfo() {
@@ -208,8 +244,6 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(this, "Field empty", Toast.LENGTH_LONG).show();
         } else {
 
-//            PersonalInfo personalInfo = new PersonalInfo(name, name, name, nationality, name, name, name, name, name, name, name);
-
             Map<String, Object> teacher = new HashMap<>();
             teacher.put("name",name);
             teacher.put("email",email);
@@ -224,12 +258,18 @@ public class RegisterActivity extends AppCompatActivity {
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+            if (photoUri != null) {
+                StorageReference storageReference = mReference.child(System.currentTimeMillis()
+                + "." + getFileExtention(photoUri));
+
+                uploadTask = storageReference.putFile(photoUri);
+            }
+
             db.collection("teachers")
                     .add(teacher)
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
-//                            Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
                             mAuth.createUserWithEmailAndPassword(email, password)
                                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                         @Override
@@ -255,8 +295,13 @@ public class RegisterActivity extends AppCompatActivity {
                             Log.e("REGFF", e.getMessage());
                         }
                     });
-//            mDatabase.child("Teacher details").setValue(personalInfo);
-
         }
+    }
+
+    private String getFileExtention(Uri uri){
+
+        android.content.ContentResolver Cr = getContentResolver();
+        android.webkit.MimeTypeMap mime= android.webkit.MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(Cr.getType(uri));
     }
 }

@@ -42,10 +42,15 @@ public class TeachersAdapter extends RecyclerView.Adapter<TeachersAdapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         private TextView name;
+        private TextView sos;
+        private TextView phone;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             name=itemView.findViewById(R.id.teacherN);
+            sos=itemView.findViewById(R.id.sos);
+            phone = itemView.findViewById(R.id.phonenum);
         }
     }
 
@@ -62,7 +67,8 @@ public class TeachersAdapter extends RecyclerView.Adapter<TeachersAdapter.ViewHo
         PersonalInfo personalInfo = list.get(position);
 
         holder.name.setText(personalInfo.getTeacherName());
-
+        holder.sos.setText(personalInfo.getTeachersubjectofesp());
+        holder.phone.setText(personalInfo.getPhonenum());
     }
 
     @Override
